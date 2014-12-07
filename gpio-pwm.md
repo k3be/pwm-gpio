@@ -35,7 +35,38 @@
 - beim pi nur ein port fuer pwm: GPIO 1 (phys port: 12)
 - default takt 19.2 MHz
 
+### BCM2835 library
 
+  http://www.airspayce.com/mikem/bcm2835/index.html
+   
+
+>  The BCM2835 supports hardware PWM on a limited subset of GPIO pins. This bcm2835 library provides functions for configuring and controlling PWM output on these pins.
+>
+>  The BCM2835 contains 2 independent PWM channels (0 and 1), each of which be connnected to a limited subset of GPIO pins. The following GPIO pins may be connected to the following PWM channels (from section 9.5):
+>  * GPIO PIN RPi pin PWM Channel ALT FUN
+>  * 12 0 0
+>  * 13 1 0
+>  * 18 1-12 0 5
+>  * 19 1 5
+>  * 40 0 0
+>  * 41 1 0
+>  * 45 1 0
+>  * 52 0 1
+>  * 53 1 1
+>  *
+>
+>  In order for a GPIO pin to emit output from its PWM channel, it must be set to the Alt Function given above. Note carefully that current versions of the Raspberry Pi only expose one of these pins (GPIO 18 = RPi Pin 1-12) on the IO headers, and therefore this is the only IO pin on the RPi that can be used for PWM. Further it must be set to ALT FUN 5 to get PWM output.
+>
+>  Both PWM channels are driven by the same PWM clock, whose clock dvider can be varied using bcm2835_pwm_set_clock(). Each channel can be separately enabled with bcm2835_pwm_set_mode(). The average output of the PWM channel is determined by the ratio of DATA/RANGE for that channel. Use bcm2835_pwm_set_range() to set the range and bcm2835_pwm_set_data() to set the data in that ratio
+>
+>  Each PWM channel can run in either Balanced or Mark-Space mode. In Balanced mode, the hardware sends a combination of clock pulses that results in an overall DATA pulses per RANGE pulses. In Mark-Space mode, the hardware sets the output HIGH for DATA clock pulses wide, followed by LOW for RANGE-DATA clock pulses.
+>
+>  The PWM clock can be set to control the PWM pulse widths. The PWM clock is derived from a 19.2MHz clock. You can set any divider, but some common ones are provided by the BCM2835_PWM_CLOCK_DIVIDER_* values of bcm2835PWMClockDivider.
+>
+>  For example, say you wanted to drive a DC motor with PWM at about 1kHz, and control the speed in 1/1024 increments from 0/1024 (stopped) through to 1024/1024 (full on). In that case you might set the clock divider to be 16, and the RANGE to 1024. The pulse repetition frequency will be 1.2MHz/1024 = 1171.875Hz.
+>
+
+  
 ### fuer servo-motoren
 
 
