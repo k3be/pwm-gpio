@@ -87,3 +87,11 @@
         gpio pwmr 1000
 
 
+
+#### servo werte
+
+*per test programm: gpio-pwm-bcm2835-test - clock: 512, range: 1024*
+
+|Servo       |MIN|MAX|
+|:-----------|--:|--:|
+|AMAX AM5811G| 20| 80|
