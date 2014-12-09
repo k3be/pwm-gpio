@@ -13,7 +13,7 @@ package main
 //   * compile this file (go build -o gpio-pwm-bcm2835-test)
 //
 // execute:
-//   * ./gpio-pwm-bcm2835-test <FROM> <TO> [<STEP_WIDTH>] [<DELAY>]
+//   * ./gpio-pwm-bcm2835-test <FROM> [<TO> [<STEP_WIDTH>] [<DELAY>]]
 //
 
 // #cgo LDFLAGS: -lbcm2835
@@ -34,20 +34,29 @@ func main() {
 	//
 	// parse args
 	//
-	if len(os.Args) < 3 {
-		fmt.Printf("%s: <FROM> <TO> [<STEP_WIDTH>] [<DELAY>]\n", os.Args[0])
+	if len(os.Args) < 2 {
+		fmt.Printf("%s: <FROM> [<TO> [<STEP_WIDTH>] [<DELAY>]]\n", os.Args[0])
 		fmt.Printf("       FROM: start value\n")
 		fmt.Printf("         TO: end value\n")
 		fmt.Printf(" STEP_WIDTH: step width - from ... to (default 10)\n")
-		fmt.Printf("      DELAY: step delay in millis (default 1000)\n")
+		fmt.Printf("      DELAY: step delay in millis (default 1000)\n\n")
+		fmt.Printf(" examples:\n")
+		fmt.Printf("    %s 40     : send only value '40'\n", os.Args[0])
+		fmt.Printf("    %s 40 60  : send 40, 50, 60\n", os.Args[0])
+		fmt.Printf("    %s 40 43 1: send 40, 41, 42, 43\n", os.Args[0])
+		fmt.Printf("")
 		os.Exit(1)
 	}
 
 	from, err := strconv.Atoi(os.Args[1])
 	failOnErr(err, "invalid <FROM>")
 
-	to, err := strconv.Atoi(os.Args[2])
-	failOnErr(err, "invalid <TO>")
+	to := from
+	// optional: to
+	if len(os.Args) >= 3 {
+		to, err = strconv.Atoi(os.Args[2])
+		failOnErr(err, "invalid <TO>")
+	}
 
 	stepWidth := 10
 	// optional: stepWidth
@@ -92,12 +101,21 @@ func main() {
 	//
 	// action
 	//
-	fmt.Printf("loop from: %d to: %d with step width: %d and delay: %d ms\n", from, to, stepWidth, delayMillis)
-	for d := from; d <= to; d += stepWidth {
-		fmt.Printf("send %d\n", d)
-		C.bcm2835_pwm_set_data(PWM_CHANNEL, C.uint32_t(d))
+	if from == to {
+		// only one value
+		fmt.Printf("send only: %d\n", from)
+		C.bcm2835_pwm_set_data(PWM_CHANNEL, C.uint32_t(from))
 
-		C.bcm2835_delay(C.uint(delayMillis))
+	} else {
+		// range
+		fmt.Printf("loop from: %d to: %d with step width: %d and delay: %d ms\n", from, to, stepWidth, delayMillis)
+		for d := from; d <= to; d += stepWidth {
+			fmt.Printf("send: %d\n", d)
+			// http://www.airspayce.com/mikem/bcm2835/group__pwm.html#ga4f445a60ace471a01d0cc4015bcea1dd
+			C.bcm2835_pwm_set_data(PWM_CHANNEL, C.uint32_t(d))
+
+			C.bcm2835_delay(C.uint(delayMillis))
+		}
 	}
 }
 
