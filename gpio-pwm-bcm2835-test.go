@@ -93,7 +93,7 @@ func main() {
 	// action
 	//
 	fmt.Printf("loop from: %d to: %d with step width: %d and delay: %d ms\n", from, to, stepWidth, delayMillis)
-	for d := from; d < to; d += stepWidth {
+	for d := from; d <= to; d += stepWidth {
 		fmt.Printf("send %d\n", d)
 		C.bcm2835_pwm_set_data(PWM_CHANNEL, C.uint32_t(d))
 
