@@ -10,7 +10,7 @@ package main
 //
 // compile:
 //   * install lib bcm2835 (./configure && make &&  make install)
-//   * compile this file (go build)
+//   * compile this file (go build -o gpio-pwm-bcm2835-test)
 //
 // execute:
 //   * ./gpio-pwm-bcm2835-test <FROM> <TO> [<STEP_WIDTH>] [<DELAY>]
